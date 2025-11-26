@@ -2,6 +2,12 @@
 
 A simple graphical version of the popular Wordle game in Python using Pygame.
 
+## 🎯 Play Online
+
+**Play directly in your browser: [https://brahimhmitti.github.io/wordle_py](https://brahimhmitti.github.io/wordle_py)**
+
+No installation required! Works on desktop and mobile browsers.
+
 ## Features
 
 - Play Wordle with a graphical interface.
@@ -24,6 +30,20 @@ A simple graphical version of the popular Wordle game in Python using Pygame.
    ```
 4. Make sure you have the word lists `en.txt` (for guesses) and `wo.txt` (for answers) in the same folder.
 
+## Test Web Version Locally
+
+To test the web version with Pygbag:
+
+```bash
+# Install pygbag
+pip install pygbag
+
+# Run local web server
+python -m pygbag main.py
+
+# Open http://localhost:8000 in your browser
+```
+
 ## How to Play
 
 - Run the game:
@@ -44,6 +64,17 @@ A simple graphical version of the popular Wordle game in Python using Pygame.
 ## Example
 
 When you run the game, you'll see a grid. Type a word like `APPLE` and press Enter. Each letter's color will tell you if it's correct or partially correct.
+
+## Technologies
+
+- **Pygame**: Game engine
+- **Pygbag**: WebAssembly conversion for browser compatibility
+- **GitHub Pages**: Free hosting
+- **GitHub Actions**: Automatic deployment on every push
+
+## Deployment
+
+The game automatically deploys to GitHub Pages when you push to the `main` branch, thanks to the configured GitHub Actions workflow.
 
 ## Contributing
 

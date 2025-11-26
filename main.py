@@ -1,3 +1,4 @@
+import asyncio
 import random
 import pygame
 
@@ -67,93 +68,102 @@ def determine_color(guess, j):
 #créer une interface
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 
-#animation loop
-animating = True
-while animating:
-    #background
-    screen.fill("white")
+async def main():
+    global INPUT, GUESSES, UNGUESSED, ANSWER, GAME_OVER
     
-    determine_unguessed_letters(GUESSES)
-    
-    #draw uunguessed letters
-    letters = FONT_SMALL.render(UNGUESSED, False, GREY)
-    surface = letters.get_rect(center = (WIDTH//2, T_MARGIN//2) )
-    screen.blit(letters, surface)
-    
-    #draw guesses
-    y = T_MARGIN
-    for i in range(6):
-        x = LR_MARGIN
-        for j in range(5):
-            #square
-            square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
-            pygame.draw.rect(screen, GREY, square, width =2, border_radius = 3)
-            
-            #letters/words that have already been guessed
-            if i < len(GUESSES):
-                color = determine_color(GUESSES[i], j)
-                pygame.draw.rect(screen, color, square, border_radius = 3)
-                letter = FONT.render(GUESSES[i][j], False, (255,255,255) )
-                surface = letter.get_rect(center = (x + SQ_SIZE//2, y + SQ_SIZE//2) )
-                screen.blit(letter, surface)
-                
-            #user text input (next guess)
-            if i == len(GUESSES) and j < len(INPUT):
-                letter = FONT.render(INPUT[j], False, GREY)
-                surface = letter.get_rect(center = (x + SQ_SIZE//2, y + SQ_SIZE//2) )
-                screen.blit(letter, surface)
-            
-            
-            
-            x += SQ_SIZE + MARGIN
-        y += SQ_SIZE + MARGIN
-            
-    #show the correct answer after a gameover 
-    if len (GUESSES) == 6 and GUESSES[5] != ANSWER:
-        GAME_OVER = True
-        letters = FONT.render(ANSWER, False, GREEN)
-        surface = letters.get_rect(center = (WIDTH//2, HEIGHT-B_MARGIN//2 - MARGIN) )
+    #animation loop
+    animating = True
+    while animating:
+        #background
+        screen.fill("white")
+        
+        determine_unguessed_letters(GUESSES)
+        
+        #draw uunguessed letters
+        letters = FONT_SMALL.render(UNGUESSED, False, GREY)
+        surface = letters.get_rect(center = (WIDTH//2, T_MARGIN//2) )
         screen.blit(letters, surface)
-            
-            
-    #updating screen
-    pygame.display.flip()
-    
-    #track user interaction 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            animating = False
-        #user presses a key    
-        elif event.type == pygame.KEYDOWN:
-            #escape key to quit the animation
-            if event.key == pygame.K_ESCAPE :
+        
+        #draw guesses
+        y = T_MARGIN
+        for i in range(6):
+            x = LR_MARGIN
+            for j in range(5):
+                #square
+                square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
+                pygame.draw.rect(screen, GREY, square, width =2, border_radius = 3)
+                
+                #letters/words that have already been guessed
+                if i < len(GUESSES):
+                    color = determine_color(GUESSES[i], j)
+                    pygame.draw.rect(screen, color, square, border_radius = 3)
+                    letter = FONT.render(GUESSES[i][j], False, (255,255,255) )
+                    surface = letter.get_rect(center = (x + SQ_SIZE//2, y + SQ_SIZE//2) )
+                    screen.blit(letter, surface)
+                    
+                #user text input (next guess)
+                if i == len(GUESSES) and j < len(INPUT):
+                    letter = FONT.render(INPUT[j], False, GREY)
+                    surface = letter.get_rect(center = (x + SQ_SIZE//2, y + SQ_SIZE//2) )
+                    screen.blit(letter, surface)
+                
+                
+                
+                x += SQ_SIZE + MARGIN
+            y += SQ_SIZE + MARGIN
+                
+        #show the correct answer after a gameover 
+        if len (GUESSES) == 6 and GUESSES[5] != ANSWER:
+            GAME_OVER = True
+            letters = FONT.render(ANSWER, False, GREEN)
+            surface = letters.get_rect(center = (WIDTH//2, HEIGHT-B_MARGIN//2 - MARGIN) )
+            screen.blit(letters, surface)
+                
+                
+        #updating screen
+        pygame.display.flip()
+        
+        # IMPORTANT : Permet au navigateur de respirer
+        await asyncio.sleep(0)
+        
+        #track user interaction 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 animating = False
-                
-            #backspace to delete a carachter
-            if event.key == pygame.K_BACKSPACE:
-                if len(INPUT) > 0:
-                    INPUT = INPUT[:len(INPUT)-1]
+            #user presses a key    
+            elif event.type == pygame.KEYDOWN:
+                #escape key to quit the animation
+                if event.key == pygame.K_ESCAPE :
+                    animating = False
                     
-            
-            #return key to submit a guesse
-            elif event.key == pygame.K_RETURN:
-                if len(INPUT) ==5 and INPUT in DICT_GUESSING:
-                    GUESSES.append(INPUT)
-                    UNGUESSED = determine_unguessed_letters(GUESSES)
-                    GAME_OVER = True if INPUT == ANSWER else False
+                #backspace to delete a carachter
+                if event.key == pygame.K_BACKSPACE:
+                    if len(INPUT) > 0:
+                        INPUT = INPUT[:len(INPUT)-1]
+                        
+                
+                #return key to submit a guesse
+                elif event.key == pygame.K_RETURN:
+                    if len(INPUT) ==5 and INPUT in DICT_GUESSING:
+                        GUESSES.append(INPUT)
+                        UNGUESSED = determine_unguessed_letters(GUESSES)
+                        GAME_OVER = True if INPUT == ANSWER else False
+                        INPUT = ""
+                        
+                #space bar to restart the game
+                elif event.key == pygame.K_SPACE :
+                    ANSWER = random.choice(DICT_ANSWERS)
+                    GAME_OVER = False
                     INPUT = ""
-                    
-            #space bar to restart the game
-            elif event.key == pygame.K_SPACE :
-                ANSWER = random.choice(DICT_ANSWERS)
-                GAME_OVER = False
-                INPUT = ""
-                GUESSES = []
-                UNGUESSED = ALPHABET
+                    GUESSES = []
+                    UNGUESSED = ALPHABET
 
 
-                
                     
-            #regular text input 
-            elif len(INPUT) < 5 and not GAME_OVER :
-                INPUT = INPUT + event.unicode.upper()
+                        
+                #regular text input 
+                elif len(INPUT) < 5 and not GAME_OVER :
+                    INPUT = INPUT + event.unicode.upper()
+
+# Lancer le jeu avec asyncio pour la compatibilité web
+asyncio.run(main())

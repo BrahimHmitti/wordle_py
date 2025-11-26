@@ -3,3 +3,8 @@ __pycache__/
 *.egg-info/
 venv/
 .env
+
+# Pygbag build files
+build/
+*.pyc
+__pycache__/
