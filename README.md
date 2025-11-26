@@ -8,6 +8,23 @@ A simple graphical version of the popular Wordle game in Python using Pygame.
 
 No installation required! Works on desktop and mobile browsers.
 
+## How to Play
+
+- Run the game:
+  ```bash
+  python main.py
+  ```
+- A window appears with empty squares.
+- Type your 5-letter guess using your keyboard.
+- Press `Enter` to submit your guess.
+- Colors will show feedback for each letter:
+  - **Green**: Correct letter in the correct place.
+  - **Yellow**: Letter is in the word, but in a different place.
+  - **Grey**: Letter is not in the word.
+- You have 6 tries to guess the correct word.
+- Press `Space` to start a new game.
+- Press `ESC` or close the window to quit.
+
 ## Features
 
 - Play Wordle with a graphical interface.
